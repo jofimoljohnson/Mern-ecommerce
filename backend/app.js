@@ -2,6 +2,9 @@ import express from "express";
 import connectDB from "./db/connectDB.js";
 import cookieParser from "cookie-parser";
 import cors from "cors";
+import dotenv from "dotenv";
+dotenv.config();
+
 import authRouter from "./routes/auth/authRoutes.js";
 import productRouter from "./routes/admin/productsRoutes.js";
 import shopProductsRouter from "./routes/shop/productsRoute.js";
@@ -14,10 +17,9 @@ import shopReviewRouter from './routes/shop/reviewRoutes.js'
 import featureRouter from './routes/common/featureRoute.js'
 const app = express();
 const PORT = process.env.PORT || 5000;
-
 app.use(
     cors({
-        origin: "http://localhost:5173",
+        origin: process.env.CLIENT_URL,
         methods: ["GET", "POST", "DELETE", "PUT"],
         allowedHeaders: ["Content-Type", "Authorization", "Cache-Control", "Expires", "Pragma"],
         credentials: true,

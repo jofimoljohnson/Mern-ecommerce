@@ -32,12 +32,19 @@ export const register = async (req, res) => {
     }
 };
 
+
+
+
 // export const login = async (req, res) => {
 //   const { email, password } = req.body;
 
 //   try {
-//     const checkUser = await User.findOne({ email });
+//     // ✅ force all required fields
+//     const checkUser = await User.findOne({ email })
+//       .select("username email role password _id")
+//       .lean();
 
+//     // ❌ user not found
 //     if (!checkUser) {
 //       return res.json({
 //         success: false,
@@ -45,6 +52,7 @@ export const register = async (req, res) => {
 //       });
 //     }
 
+//     // ✅ password check
 //     const checkPasswordMatch = await bcrypt.compare(password, checkUser.password);
 
 //     if (!checkPasswordMatch) {
@@ -54,24 +62,25 @@ export const register = async (req, res) => {
 //       });
 //     }
 
+//     // ✅ token create
 //     const token = jwt.sign(
 //       {
 //         id: checkUser._id,
 //         role: checkUser.role,
 //         email: checkUser.email,
-//         username:checkUser.username
+//         username: checkUser.username,
 //       },
 //       "CLIENT_SECRET_KEY",
 //       { expiresIn: "60m" }
 //     );
 
+//     // ✅ response
 //     res
 //       .cookie("token", token, {
 //         httpOnly: true,
 //         secure: false,
 //         sameSite: "lax",
 //         maxAge: 60 * 60 * 1000,
-
 //       })
 //       .json({
 //         success: true,
@@ -80,9 +89,10 @@ export const register = async (req, res) => {
 //           email: checkUser.email,
 //           role: checkUser.role,
 //           id: checkUser._id,
-//           username:checkUser.username
+//           username: checkUser.username, // 🔥 now definitely varum
 //         },
 //       });
+
 //   } catch (error) {
 //     console.log(error);
 //     res.status(500).json({
@@ -97,12 +107,10 @@ export const login = async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    // ✅ force all required fields
     const checkUser = await User.findOne({ email })
       .select("username email role password _id")
       .lean();
 
-    // ❌ user not found
     if (!checkUser) {
       return res.json({
         success: false,
@@ -110,7 +118,6 @@ export const login = async (req, res) => {
       });
     }
 
-    // ✅ password check
     const checkPasswordMatch = await bcrypt.compare(password, checkUser.password);
 
     if (!checkPasswordMatch) {
@@ -120,7 +127,6 @@ export const login = async (req, res) => {
       });
     }
 
-    // ✅ token create
     const token = jwt.sign(
       {
         id: checkUser._id,
@@ -128,16 +134,15 @@ export const login = async (req, res) => {
         email: checkUser.email,
         username: checkUser.username,
       },
-      "CLIENT_SECRET_KEY",
+      process.env.JWT_SECRET_KEY, // ✅ env use cheyyu
       { expiresIn: "60m" }
     );
 
-    // ✅ response
     res
       .cookie("token", token, {
         httpOnly: true,
-        secure: false,
-        sameSite: "lax",
+        secure: true,          // 🔥 MUST for production
+        sameSite: "None",      // 🔥 MUST for cross-origin
         maxAge: 60 * 60 * 1000,
       })
       .json({
@@ -147,7 +152,7 @@ export const login = async (req, res) => {
           email: checkUser.email,
           role: checkUser.role,
           id: checkUser._id,
-          username: checkUser.username, // 🔥 now definitely varum
+          username: checkUser.username,
         },
       });
 
