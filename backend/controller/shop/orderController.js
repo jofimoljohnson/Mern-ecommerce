@@ -1,7 +1,7 @@
 import Order from "../../models/Order.js";
 import paypal from "../../helpers/paypal.js";
 import Cart from "../../models/Cart.js";
-import Product from '../../models/Product.js'
+import Product from "../../models/Product.js";
 
 export const createOrder = async (req, res) => {
     try {
@@ -25,8 +25,8 @@ export const createOrder = async (req, res) => {
                 payment_method: "paypal",
             },
             redirect_urls: {
-                return_url: "http://localhost:5173/shop/paypal-return",
-                cancel_url: "http://localhost:5173/shop/paypal-cancel",
+                return_url: "https://mern-ecommerce-gzvy.vercel.app/shop/paypal-return",
+                cancel_url: "https://mern-ecommerce-gzvy.vercel.app/shop/paypal-cancel",
             },
             transactions: [
                 {
@@ -88,10 +88,6 @@ export const createOrder = async (req, res) => {
         });
     }
 };
-
-
-
-
 
 export const capturePayment = async (req, res) => {
     try {
@@ -155,7 +151,6 @@ export const capturePayment = async (req, res) => {
             message: "Order confirmed",
             data: order,
         });
-
     } catch (error) {
         console.log(error);
 
@@ -166,23 +161,11 @@ export const capturePayment = async (req, res) => {
     }
 };
 
-
-
-
-
-
-
-
-
-
-
-
-
 export const getAllOrdersByUser = async (req, res) => {
     try {
         const { userId } = req.params;
         const orders = await Order.find({ userId });
-       
+
         if (!orders.length) {
             return res.status(200).json({
                 success: true,
@@ -227,4 +210,3 @@ export const getOrderDetails = async (req, res) => {
         });
     }
 };
-
