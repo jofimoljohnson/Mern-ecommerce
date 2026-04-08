@@ -95,10 +95,7 @@ import Product from "../../models/Product.js";
 //     }
 // };
 
-import Order from "../../models/Order.js";
-import paypal from "../../helpers/paypal.js";
-import Cart from "../../models/Cart.js";
-import Product from "../../models/Product.js";
+;
 
 export const createOrder = async (req, res) => {
     try {
