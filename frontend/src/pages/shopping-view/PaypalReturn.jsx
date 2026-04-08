@@ -14,31 +14,36 @@ const PaypalReturn = () => {
     const { user } = useSelector((state) => state.auth);
 
     useEffect(() => {
-  if (paymentId && payerId) {
-    const orderId =
-      params.get("orderId") ||
-      JSON.parse(sessionStorage.getItem("currentOrderId"));
+        if (paymentId && payerId) {
+            const orderIdFromParams = params.get("orderId");
 
-    if (!orderId) {
-      console.log("Order ID missing ❌");
-      return;
-    }
+            let orderId = orderIdFromParams;
 
-    dispatch(capturePayment({ paymentId, payerId, orderId })).then((data) => {
-      if (data?.payload?.success) {
-        sessionStorage.removeItem("currentOrderId");
+            if (!orderId) {
+                const stored = sessionStorage.getItem("currentOrderId");
+                orderId = stored ? JSON.parse(stored) : null;
+            }
 
-        dispatch(
-          fetchCartItems({
-            userId: user?._id || user?.id,
-          })
-        );
+            if (!orderId) {
+                console.log("Order ID missing ❌");
+                return;
+            }
 
-        window.location.href = "/shop/payment-success";
-      }
-    });
-  }
-}, [paymentId, payerId, dispatch]);
+            dispatch(capturePayment({ paymentId, payerId, orderId })).then((data) => {
+                if (data?.payload?.success) {
+                    sessionStorage.removeItem("currentOrderId");
+
+                    dispatch(
+                        fetchCartItems({
+                            userId: user?._id || user?.id,
+                        }),
+                    );
+
+                    window.location.href = "/shop/payment-success";
+                }
+            });
+        }
+    }, [paymentId, payerId, dispatch]);
 
     return (
         <>
