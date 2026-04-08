@@ -52,14 +52,6 @@ export const deleteCartItems = createAsyncThunk("/api/shop/cart/deleteCartItems"
     return response.data;
 });
 
-// export const updateCart = createAsyncThunk("/api/shop/cart/updateCart", async ({ userId, productId, quantity }) => {
-//     const response = await api.put("/api/shop/cart/update-cart", {
-//         userId,
-//         productId,
-//         quantity,
-//     });
-//     return response.data;
-// });
 
 
 export const updateCart = createAsyncThunk(

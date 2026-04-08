@@ -14,23 +14,31 @@ const PaypalReturn = () => {
     const { user } = useSelector((state) => state.auth);
 
     useEffect(() => {
-        if (paymentId && payerId) {
-            const orderId = JSON.parse(sessionStorage.getItem("currentOrderId"));
-            console.log("orderId:", orderId);
-            dispatch(capturePayment({ paymentId, payerId, orderId })).then((data) => {
-                if (data?.payload?.success) {
-                    sessionStorage.removeItem("currentOrderId");
-                    dispatch(
-                        fetchCartItems({
-                            userId: user?._id || user?.id,
-                        }),
-                    );
+  if (paymentId && payerId) {
+    const orderId =
+      params.get("orderId") ||
+      JSON.parse(sessionStorage.getItem("currentOrderId"));
 
-                    window.location.href = "/shop/payment-success";
-                }
-            });
-        }
-    }, [paymentId, payerId, dispatch]);
+    if (!orderId) {
+      console.log("Order ID missing ❌");
+      return;
+    }
+
+    dispatch(capturePayment({ paymentId, payerId, orderId })).then((data) => {
+      if (data?.payload?.success) {
+        sessionStorage.removeItem("currentOrderId");
+
+        dispatch(
+          fetchCartItems({
+            userId: user?._id || user?.id,
+          })
+        );
+
+        window.location.href = "/shop/payment-success";
+      }
+    });
+  }
+}, [paymentId, payerId, dispatch]);
 
     return (
         <>
