@@ -3,99 +3,7 @@ import paypal from "../../helpers/paypal.js";
 import Cart from "../../models/Cart.js";
 import Product from "../../models/Product.js";
 
-// export const createOrder = async (req, res) => {
-//     try {
-//         const {
-//             userId,
-//             cartItems,
-//             addressInfo,
-//             orderStatus,
-//             paymentMethod,
-//             paymentStatus,
-//             totalAmount,
-//             orderDate,
-//             orderUpdateDate,
-//             paymentId,
-//             payerId,
-//             cartId,
-//         } = req.body;
 
-//         const create_payment_json = {
-//             intent: "sale",
-//             payer: {
-//                 payment_method: "paypal",
-//             },
-//             // redirect_urls: {
-//             //     return_url: "https://mern-ecommerce-gzvy.vercel.app/shop/paypal-return",
-//             //     cancel_url: "https://mern-ecommerce-gzvy.vercel.app/shop/paypal-cancel",
-//             // },
-
-//             redirect_urls: {
-//     return_url: `https://mern-ecommerce-gzvy.vercel.app/shop/paypal-return?orderId=${newlyCreatedOrder._id}`,
-//     cancel_url: "https://mern-ecommerce-gzvy.vercel.app/shop/paypal-cancel",
-// },
-//             transactions: [
-//                 {
-//                     item_list: {
-//                         items: cartItems.map((item) => ({
-//                             name: item.title,
-//                             sku: item.productId,
-//                             price: item.price.toFixed(2),
-//                             currency: "USD",
-//                             quantity: item.quantity,
-//                         })),
-//                     },
-//                     amount: {
-//                         currency: "USD",
-//                         total: totalAmount.toFixed(2),
-//                     },
-//                     description: "description",
-//                 },
-//             ],
-//         };
-
-//         paypal.payment.create(create_payment_json, async (error, paymentInfo) => {
-//             if (error) {
-//                 console.log(error);
-//                 return res.status(500).json({
-//                     success: false,
-//                     message: "Error while creating paypal payment",
-//                 });
-//             } else {
-//                 const newlyCreatedOrder = new Order({
-//                     userId,
-//                     cartItems,
-//                     addressInfo,
-//                     orderStatus,
-//                     paymentMethod,
-//                     paymentStatus,
-//                     totalAmount,
-//                     orderDate,
-//                     orderUpdateDate,
-//                     paymentId,
-//                     payerId,
-//                     cartId,
-//                 });
-//                 await newlyCreatedOrder.save();
-//                 const approvalURL = paymentInfo.links.find((link) => link.rel === "approval_url").href;
-//                 res.status(201).json({
-//                     success: true,
-//                     approvalURL,
-//                     orderId: newlyCreatedOrder._id,
-//                 });
-//             }
-//         });
-//     } catch (error) {
-//         console.log(error);
-
-//         return res.status(500).json({
-//             success: false,
-//             message: "Something went wrong",
-//         });
-//     }
-// };
-
-;
 
 export const createOrder = async (req, res) => {
     try {
@@ -114,7 +22,7 @@ export const createOrder = async (req, res) => {
             cartId,
         } = req.body;
 
-        // ✅ 1. CREATE ORDER FIRST
+        // ✅ 1. CREATE ORDER
         const newlyCreatedOrder = new Order({
             userId,
             cartItems,
@@ -132,15 +40,15 @@ export const createOrder = async (req, res) => {
 
         await newlyCreatedOrder.save();
 
-        // ✅ 2. CREATE PAYPAL PAYMENT
+        // ✅ 2. PAYPAL PAYMENT JSON
         const create_payment_json = {
             intent: "sale",
             payer: {
                 payment_method: "paypal",
             },
             redirect_urls: {
-                return_url: `https://mern-ecommerce-gzvy.vercel.app/shop/paypal-return?orderId=${newlyCreatedOrder._id}`,
-                cancel_url: "https://mern-ecommerce-gzvy.vercel.app/shop/paypal-cancel",
+                return_url: `https://mern-ecommerce-gzvy-git-master-jofimoljohnsons-projects.vercel.app/shop/paypal-return?orderId=${newlyCreatedOrder._id}`,
+                cancel_url: `https://mern-ecommerce-gzvy-git-master-jofimoljohnsons-projects.vercel.app/shop/paypal-cancel`,
             },
             transactions: [
                 {
@@ -157,21 +65,23 @@ export const createOrder = async (req, res) => {
                         currency: "USD",
                         total: totalAmount.toFixed(2),
                     },
-                    description: "description",
+                    description: "Order payment",
                 },
             ],
         };
 
-        // ✅ 3. CALL PAYPAL
+        // ✅ 3. CREATE PAYMENT
         paypal.payment.create(create_payment_json, async (error, paymentInfo) => {
             if (error) {
-                console.log(error);
+                console.log("PAYPAL ERROR:", error);
                 return res.status(500).json({
                     success: false,
                     message: "Error while creating paypal payment",
                 });
             } else {
-                const approvalURL = paymentInfo.links.find((link) => link.rel === "approval_url").href;
+                const approvalURL = paymentInfo.links.find(
+                    (link) => link.rel === "approval_url"
+                )?.href;
 
                 res.status(201).json({
                     success: true,
@@ -181,13 +91,24 @@ export const createOrder = async (req, res) => {
             }
         });
     } catch (error) {
-        console.log(error);
+        console.log("CREATE ORDER ERROR:", error);
         return res.status(500).json({
             success: false,
             message: "Something went wrong",
         });
     }
 };
+
+
+
+
+
+
+
+
+
+
+
 
 export const capturePayment = async (req, res) => {
     try {
