@@ -47,8 +47,8 @@ export const createOrder = async (req, res) => {
                 payment_method: "paypal",
             },
             redirect_urls: {
-                return_url: `https://mern-ecommerce-gzvy-git-master-jofimoljohnsons-projects.vercel.app/shop/paypal-return?orderId=${newlyCreatedOrder._id}`,
-                cancel_url: `https://mern-ecommerce-gzvy-git-master-jofimoljohnsons-projects.vercel.app/shop/paypal-cancel`,
+                return_url: `https://mern-ecommerce-gzvy.vercel.app/shop/paypal-return?orderId=${newlyCreatedOrder._id}`,
+                cancel_url: `https://mern-ecommerce-gzvy.vercel.app/shop/paypal-cancel`,
             },
             transactions: [
                 {
