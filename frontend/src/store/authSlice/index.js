@@ -24,6 +24,7 @@ export const logout = createAsyncThunk("/api/auth/logout", async () => {
 
 export const checkAuth = createAsyncThunk("/api/auth/checkAuth", async () => {
     const response = await api.get("/api/auth/checkauth", {
+        withCredentials:true,
         headers: {
             "Cache-Control": "no-store, no-cache, must-revalidate, proxy-revalidate",
             Expires: "0",

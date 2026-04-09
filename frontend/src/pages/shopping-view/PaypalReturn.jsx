@@ -1,4 +1,5 @@
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
+import { checkAuth } from "@/store/authSlice";
 import { fetchCartItems } from "@/store/shop/cartSlice";
 import { capturePayment } from "@/store/shop/orderSlice";
 import { useEffect } from "react";
@@ -14,36 +15,41 @@ const PaypalReturn = () => {
     const { user } = useSelector((state) => state.auth);
 
     useEffect(() => {
-        if (paymentId && payerId) {
-            const orderIdFromParams = params.get("orderId");
+    if (paymentId && payerId && user) {
+        const orderIdFromParams = params.get("orderId");
 
-            let orderId = orderIdFromParams;
+        let orderId = orderIdFromParams;
 
-            if (!orderId) {
-                const stored = sessionStorage.getItem("currentOrderId");
-                orderId = stored ? JSON.parse(stored) : null;
-            }
-
-            if (!orderId) {
-                console.log("Order ID missing ❌");
-                return;
-            }
-
-            dispatch(capturePayment({ paymentId, payerId, orderId })).then((data) => {
-                if (data?.payload?.success) {
-                    sessionStorage.removeItem("currentOrderId");
-
-                    dispatch(
-                        fetchCartItems({
-                            userId: user?._id || user?.id,
-                        }),
-                    );
-
-                    window.location.href = "/shop/payment-success";
-                }
-            });
+        if (!orderId) {
+            const stored = sessionStorage.getItem("currentOrderId");
+            orderId = stored ? JSON.parse(stored) : null;
         }
-    }, [paymentId, payerId, dispatch]);
+
+        if (!orderId) {
+            console.log("Order ID missing ❌");
+            return;
+        }
+
+        dispatch(capturePayment({ paymentId, payerId, orderId })).then((data) => {
+            if (data?.payload?.success) {
+                sessionStorage.removeItem("currentOrderId");
+
+                dispatch(
+                    fetchCartItems({
+                        userId: user?._id || user?.id,
+                    }),
+                );
+
+                window.location.href = "/shop/payment-success";
+            }
+        });
+    }
+}, [paymentId, payerId, user, dispatch]);
+
+
+    useEffect(() => {
+  dispatch(checkAuth());
+}, [dispatch]);
 
     return (
         <>
