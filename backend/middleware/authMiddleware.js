@@ -8,7 +8,7 @@ export const authMiddleware = (req, res, next) => {
   if (!token) return res.status(401).json({ success: false });
 
   try {
-    const decoded = jwt.verify(token, "CLIENT_SECRET_KEY");
+    const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
     req.user = decoded;
     next();
   } catch (error) {
