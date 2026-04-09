@@ -1,20 +1,8 @@
 {
-  "rewrites": [
+  "routes": [
     {
-      "source": "/shop/(.*)",
-      "destination": "/index.html"
-    },
-    {
-      "source": "/auth/(.*)",
-      "destination": "/index.html"
-    },
-    {
-      "source": "/admin/(.*)",
-      "destination": "/index.html"
-    },
-    {
-      "source": "/(.*)",
-      "destination": "/index.html"
+      "src": "/(.*)",
+      "dest": "/index.html"
     }
   ]
 }
