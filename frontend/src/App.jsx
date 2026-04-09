@@ -44,11 +44,10 @@ const App = () => {
             <Toaster position="top-right" richColors />
 
             <Routes>
-                <Route path="/"
-                 element={
-                        <CheckAuth isAuthenticated={isAuthenticated} user={user} isLoading={isLoading}>
-                        </CheckAuth>
-                    }
+                <Route path="/shop/paypal-return" element={<PaypalReturn />} />
+                <Route
+                    path="/"
+                    element={<CheckAuth isAuthenticated={isAuthenticated} user={user} isLoading={isLoading}></CheckAuth>}
                 />
                 <Route
                     path="/auth"
@@ -88,9 +87,9 @@ const App = () => {
                     <Route path="listing" element={<ShoppingListing />} />
                     <Route path="checkout" element={<ShoppingCheckout />} />
                     <Route path="account" element={<ShoppingAccount />} />
-                    <Route path="paypal-return" element={<PaypalReturn />} />
+                    {/* <Route path="paypal-return" element={<PaypalReturn />} /> */}
                     <Route path="payment-success" element={<PaymentSuccess />} />
-                    <Route path="search" element={<SearchProducts/>}/>
+                    <Route path="search" element={<SearchProducts />} />
                 </Route>
                 <Route path="*" element={<NotFound />} />
                 <Route path="/unauth-page" element={<UnauthPage />} />
